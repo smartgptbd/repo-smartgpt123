@@ -2,11 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartGPT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartGPT - Chat Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    .chat-box {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 10px;
+      height: 300px;
+      overflow-y: scroll;
+      margin-bottom: 10px;
+    }
+    .input-box {
+      display: flex;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome to SmartGPT</h1>
-  <p>This is a sample website created using mobile.</p>
+
+<h1>🤖 SmartGPT Chat</h1>
+
+<div class="chat-box" id="chatBox">
+  <p><strong>Bot:</strong> সালাম! কিভাবে সাহায্য করতে পারি?</p>
+</div>
+
+<div class="input-box">
+  <input type="text" id="userInput" placeholder="এখানে লিখুন..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  function sendMessage() {
+    const input = document.getElementById("userInput");
+    const chatBox = document.getElementById("chatBox");
+    const userText = input.value.trim();
+    if (userText === "") return;
+
+    // Show user message
+    chatBox.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
+
+    // Simulate bot response
+    let botReply = "দুঃখিত, আমি এখনও শিখছি!";
+    if (userText.includes("কেমন আছো")) {
+      botReply = "আলহামদুলিল্লাহ! আপনি কেমন আছেন?";
+    } else if (userText.includes("নাম")) {
+      botReply = "আমার নাম SmartGPT!";
+    } else if (userText.includes("ধন্যবাদ")) {
+      botReply = "আপনাকেও ধন্যবাদ!";
+    }
+
+    chatBox.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+    input.value = "";
+  }
+</script>
+
 </body>
 </html>
