@@ -1,77 +1,55 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <title>SmartGPT Chat</title>
+  <meta charset="UTF-8" />
+  <title>SmartGPT</title>
   <style>
-    body {
-      font-family: Arial;
-      background: #f4f4f4;
-      padding: 20px;
-    }
-    #chatbox {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      max-width: 600px;
-      margin: auto;
-    }
-    .msg {
-      margin-bottom: 10px;
-    }
-    .bot {
-      color: green;
-    }
-    .user {
-      color: blue;
-    }
-    #inputBox {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-    }
+    body { font-family: Arial; background: #f1f1f1; padding: 30px; }
+    .chat-box { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+    .bot, .user { margin-bottom: 10px; }
+    .bot { color: green; }
+    .user { color: blue; }
   </style>
 </head>
 <body>
-  <div id="chatbox">
-    <div class="msg bot">🤖 <strong>Bot:</strong> সালাম! কিভাবে সাহায্য করতে পারি?</div>
-    <div id="messages"></div>
-    <input type="text" id="inputBox" placeholder="আপনার প্রশ্ন লিখুন...">
+  <div class="chat-box" id="chatBox">
+    <div class="bot">🤖 SmartGPT: কিভাবে সাহায্য করতে পারি?</div>
   </div>
+  <input type="text" id="userInput" placeholder="আপনার প্রশ্ন লিখুন..." style="width:100%; padding:10px;" />
+  <button onclick="sendMessage()">প্রশ্ন করুন</button>
 
   <script>
-    const input = document.getElementById('inputBox');
-    const messages = document.getElementById('messages');
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const chatBox = document.getElementById("chatBox");
 
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        const question = input.value;
-        addMessage('user', question);
-        input.value = '';
-        getAnswer(question);
-      }
-    });
+      const userText = input.value;
+      if (!userText) return;
 
-    function addMessage(sender, text) {
-      const div = document.createElement('div');
-      div.className = 'msg ' + sender;
-      div.innerHTML = `<strong>${sender === 'user' ? 'You' : 'Bot'}:</strong> ${text}`;
-      messages.appendChild(div);
-    }
+      chatBox.innerHTML += `<div class="user">🙋‍♂️ আপনি: ${userText}</div>`;
+      input.value = "";
 
-    function getAnswer(q) {
-      let answer = "আমি এখনো শিখছি!";
-      q = q.toLowerCase();
+      chatBox.innerHTML += `<div class="bot">⏳ SmartGPT ভাবছে...</div>`;
 
-      if (q.includes("আসসালামু") || q.includes("hi") || q.includes("hello")) {
-        answer = "ওয়ালাইকুমুস সালাম! 😊";
-      } else if (q.includes("তোমার নাম কি")) {
-        answer = "আমার নাম SmartGPT! আমি সাহায্য করতে প্রস্তুত।";
-      } else if (q.includes("বাংলাদেশ")) {
-        answer = "বাংলাদেশ একটি সুন্দর দেশ।";
-      }
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: userText }]
+        })
+      });
 
-      addMessage('bot', answer);
+      const data = await response.json();
+      const botReply = data.choices?.[0]?.message?.content || "দুঃখিত, আমি বুঝতে পারিনি।";
+
+      // Remove "SmartGPT ভাবছে..."
+      chatBox.lastElementChild.remove();
+
+      chatBox.innerHTML += `<div class="bot">🤖 SmartGPT: ${botReply}</div>`;
     }
   </script>
 </body>
