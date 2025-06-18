@@ -1,41 +1,62 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
-  <title>SmartGPT</title>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🤖 SmartGPT Chat</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .chatbox { width: 90%; max-width: 500px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .chatlog { height: 300px; overflow-y: auto; margin-bottom: 10px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+    .inputbox { display: flex; }
+    .inputbox input { flex: 1; padding: 10px; border-radius: 5px 0 0 5px; border: 1px solid #ccc; }
+    .inputbox button { padding: 10px; border: none; background: #28a745; color: white; border-radius: 0 5px 5px 0; cursor: pointer; }
+  </style>
 </head>
 <body>
-  <h1>🤖 SmartGPT Chat</h1>
-  <div id="chat-box" style="border:1px solid #ccc; padding:10px; width:90%; height:300px; overflow-y:scroll;"></div>
-  <input id="user-input" type="text" placeholder="Type your question..." style="width:80%;">
-  <button onclick="sendMessage()">Send</button>
+  <div class="chatbox">
+    <h2>🤖 SmartGPT</h2>
+    <div class="chatlog" id="chatlog"></div>
+    <div class="inputbox">
+      <input type="text" id="userInput" placeholder="প্রশ্ন লিখুন..." />
+      <button onclick="sendMessage()">পাঠান</button>
+    </div>
+  </div>  <script>
+    const chatlog = document.getElementById("chatlog");
+    const userInput = document.getElementById("userInput");
 
-  <script>
     async function sendMessage() {
-      const input = document.getElementById("user-input").value;
-      const chatBox = document.getElementById("chat-box");
+      const message = userInput.value.trim();
+      if (!message) return;
 
-      chatBox.innerHTML += `<p><strong>You:</strong> ${input}</p>`;
-      document.getElementById("user-input").value = "";
+      appendMessage("You", message);
+      userInput.value = "";
 
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer YOUR_API_KEY_HERE"
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: input }]
-        })
-      });
+      try {
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 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"
+          },
+          body: JSON.stringify({
+            model: "openai/gpt-3.5-turbo",
+            messages: [{ role: "user", content: message }]
+          })
+        });
 
-      const data = await response.json();
-      const reply = data.choices[0].message.content;
-
-      chatBox.innerHTML += `<p><strong>Bot:</strong> ${reply}</p>`;
-      chatBox.scrollTop = chatBox.scrollHeight;
+        const data = await response.json();
+        const reply = data.choices[0].message.content;
+        appendMessage("Bot", reply);
+      } catch (err) {
+        appendMessage("Bot", "দুঃখিত, আমি এখনও শিখছি!");
+      }
     }
-  </script>
-</body>
+
+    function appendMessage(sender, text) {
+      const messageElement = document.createElement("div");
+      messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chatlog.appendChild(messageElement);
+      chatlog.scrollTop = chatlog.scrollHeight;
+    }
+  </script></body>
 </html>
