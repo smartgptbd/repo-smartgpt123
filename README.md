@@ -1,2 +1,12 @@
 # repo-smartgpt123
-This is the first commit.
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>SmartGPT</title>
+  </head>
+  <body>
+    <h1>Welcome to SmartGPT!</h1>
+    <p>This is your AI chatbot homepage.</p>
+  </body>
+</html>
